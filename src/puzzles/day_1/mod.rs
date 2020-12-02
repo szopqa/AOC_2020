@@ -5,10 +5,11 @@ pub struct Puzzle {}
 const EXPECTED_SUM: i64 = 2020;
 
 impl Solution for Puzzle {
+    type PuzzleInput = i64;
     type OutputPartOne = i64;
     type OutputPartTwo = i64;
 
-    fn solve_part_one(_input: &Vec<i64>) -> Self::OutputPartOne {
+    fn solve_part_one(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartOne {
         let mut _result: Self::OutputPartOne = 0;
 
         for _each_elem in _input {
@@ -21,7 +22,7 @@ impl Solution for Puzzle {
         _result
     }
 
-    fn solve_part_two(_input: &Vec<i64>) -> Self::OutputPartTwo {
+    fn solve_part_two(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartTwo {
         let mut _result: Self::OutputPartTwo = 0;
 
         for (_i, _each_elem) in _input.into_iter().enumerate() {
