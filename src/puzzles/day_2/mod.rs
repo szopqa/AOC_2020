@@ -47,8 +47,7 @@ impl PassValidator {
         let _at_min = self._pass.chars().nth(self._min_num as usize - 1).unwrap();
         let _at_max = self._pass.chars().nth(self._max_num as usize - 1).unwrap();
 
-        (_at_min == self._letter && _at_max != self._letter) ||
-            (_at_min != self._letter && _at_max == self._letter)
+        (_at_min == self._letter ) != (_at_max == self._letter)
     }
 }
 
