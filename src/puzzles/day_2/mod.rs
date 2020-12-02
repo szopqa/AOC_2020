@@ -16,17 +16,16 @@ struct PassValidator {
 impl PassValidator {
     pub fn new(_pass_line: &str) -> Self {
         lazy_static! {
-            static ref MIN_REGEX: Regex = Regex::new(r"^\d+").unwrap();
-            static ref MAX_REGEX: Regex = Regex::new(r"^\d+-(\d+)").unwrap();
-            static ref LETTER_REGEX: Regex = Regex::new(r"([a-z]+):").unwrap();
-            static ref PASS_REGEX: Regex = Regex::new(r":\s+(\w+)").unwrap();
+            static ref REG: Regex = Regex::new(r"^(\d+)-(\d+)\s+(\w+):\s+(\w+)").unwrap();
         }
 
+        let _matches = REG.captures(_pass_line).unwrap();
+
         Self {
-            _min_num: MIN_REGEX.captures(_pass_line).unwrap().get(0).unwrap().as_str().parse::<u8>().unwrap(),
-            _max_num: MAX_REGEX.captures(_pass_line).unwrap().get(1).unwrap().as_str().parse::<u8>().unwrap(),
-            _letter: LETTER_REGEX.captures(_pass_line).unwrap().get(1).unwrap().as_str().parse::<char>().unwrap(),
-            _pass: PASS_REGEX.captures(_pass_line).unwrap().get(1).unwrap().as_str().parse::<String>().unwrap()
+            _min_num: _matches.get(1).unwrap().as_str().parse::<u8>().unwrap(),
+            _max_num: _matches.get(2).unwrap().as_str().parse::<u8>().unwrap(),
+            _letter: _matches.get(3).unwrap().as_str().parse::<char>().unwrap(),
+            _pass: _matches.get(4).unwrap().as_str().parse::<String>().unwrap()
         }
     }
 
