@@ -1,27 +1,40 @@
 use std::{
     fmt::Display,
     io::{BufReader, prelude::*},
-    path::Path
+    path::Path,
+    fs::File
 };
 
-use std::fs::File;
 pub trait Solution {
+    type PuzzleInput: std::str::FromStr + std::fmt::Debug;
+
     type OutputPartOne: Display;
     type OutputPartTwo: Display;
 
-    fn read_input(filename: &Path) -> Vec<i64> {
+    fn read_input(filename: &Path) -> Vec<Self::PuzzleInput> 
+        where 
+            <Self::PuzzleInput as std::str::FromStr>::Err: std::fmt::Debug 
+    {
         let f = File::open(filename)
             .expect(&format!("Could not open file at path {:?}!", filename));
         let f = BufReader::new(f);
 
-        f.lines().filter_map(|l| l.ok()).map(|l| l.parse::<i64>().unwrap()).collect()
+        f.lines()
+            .filter_map(|l| l.ok())
+            .map(|l| l.parse::<Self::PuzzleInput>().unwrap())
+            .collect()
     }
 
-    fn solve_part_one(_input: &Vec<i64>) -> Self::OutputPartOne;
-    fn solve_part_two(_input: &Vec<i64>) -> Self::OutputPartTwo;
+    fn solve_part_one(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartOne;
+    fn solve_part_two(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartTwo;
 
-    fn solve(_day_name: &str) {
-        let _input = Self::read_input(
+    fn solve(_day_name: &str) 
+        where 
+            <Self::PuzzleInput as std::str::FromStr>::Err: std::fmt::Debug 
+    {
+        println!("\nSolving puzzle for {}", _day_name);
+
+        let _input: Vec<Self::PuzzleInput> = Self::read_input(
             &std::env::current_dir().unwrap().join("src/puzzles").join(_day_name).join("input.txt")
         );
 
