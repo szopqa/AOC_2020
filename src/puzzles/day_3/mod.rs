@@ -25,7 +25,7 @@ impl <'a> Map <'a> {
                 break;
             }
 
-            let mut _layer = self._items.get(_y_pos).unwrap();
+            let _layer = self._items.get(_y_pos).unwrap();
 
             let _val = _layer.chars().nth(_x_pos).unwrap();
 
