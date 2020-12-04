@@ -11,6 +11,11 @@ pub trait Solution {
     type OutputPartOne: Display;
     type OutputPartTwo: Display;
 
+    // should be overwritten if some extra actions are required on input
+    fn normalize_input(_input: Vec<Self::PuzzleInput>) -> Vec<Self::PuzzleInput> {
+        _input
+    }
+
     fn read_input(filename: &Path) -> Vec<Self::PuzzleInput> 
         where 
             <Self::PuzzleInput as std::str::FromStr>::Err: std::fmt::Debug 
@@ -19,10 +24,12 @@ pub trait Solution {
             .expect(&format!("Could not open file at path {:?}!", filename));
         let f = BufReader::new(f);
 
-        f.lines()
-            .filter_map(|l| l.ok())
-            .map(|l| l.parse::<Self::PuzzleInput>().unwrap())
-            .collect()
+        Self::normalize_input(
+            f.lines()
+                .filter_map(|l| l.ok())
+                .map(|l| l.parse::<Self::PuzzleInput>().unwrap())
+                .collect()
+        )
     }
 
     fn solve_part_one(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartOne;
