@@ -6,8 +6,6 @@ pub struct Puzzle {}
 
 
 lazy_static! {
-    // static ref REG: Regex = Regex::new(r"byr:(\d+)|iyr:(\d+)|eyr:(\d+)|hgt:(\w+)|hcl:(#\w+)|ecl:(\w+)|pid:(\w+)|cid:(\d+)").unwrap();
-    
     static ref BYR_REG: Regex = Regex::new(r"byr:(\d+)").unwrap();
     static ref IYR_REG: Regex = Regex::new(r"iyr:(\d+)").unwrap();
     static ref EYR_REG: Regex = Regex::new(r"eyr:(\d+)").unwrap();
@@ -16,6 +14,9 @@ lazy_static! {
     static ref ECL_REG: Regex = Regex::new(r"ecl:(\W?\w+)").unwrap();
     static ref PID_REG: Regex = Regex::new(r"pid:(\W?\w+)").unwrap();
     static ref CID_REG: Regex = Regex::new(r"cid:(\d+)").unwrap();
+
+    static ref VALID_HEX_REG: Regex = Regex::new(r"[^0-9a-f]").unwrap();
+    static ref VALID_PID_REG: Regex = Regex::new(r"[^0-9]").unwrap();
 }
 
 #[derive(Debug)]
@@ -68,9 +69,55 @@ impl <'a> PassValidator <'a> {
         }
     }
 
-    pub fn is_valid_part_one(&self) -> bool {
+    pub fn contains_mandatory_fields(&self) -> bool {
         self._byr.is_some() && self._iyr.is_some() && self._eyr.is_some() && self._hgt.is_some()
             && self._hcl.is_some() && self._ecl.is_some() && self._pid.is_some()
+    }
+
+    pub fn contains_valid_values(&self) -> bool {
+        let _byr_value = self._byr.unwrap().parse::<u32>().unwrap();
+        let _iyr_value = self._iyr.unwrap().parse::<u32>().unwrap();
+        let _eyr_value = self._eyr.unwrap().parse::<u32>().unwrap();
+
+        let _hgt_value = self._hgt.unwrap();
+        let _hcl_value = self._hcl.unwrap();
+        let _ecl_value = self._ecl.unwrap();
+        let _pid_value = self._pid.unwrap();
+
+        let _has_valid_byr = _byr_value >= 1920 && _byr_value <= 2002;
+        let _has_valid_iyr = _iyr_value >= 2010 && _iyr_value <= 2020;
+        let _has_valid_eyr = _eyr_value >= 2020 && _eyr_value <= 2030;
+
+        let _has_valid_hgt: bool = match &_hgt_value[_hgt_value.len()-2..] {
+            "cm" => {
+                let _val = _hgt_value[.._hgt_value.len()-2].parse::<u8>().unwrap();
+                _val >= 150 && _val <= 193
+            },
+            "in" => {
+                let _val = _hgt_value[.._hgt_value.len()-2].parse::<u8>().unwrap();
+                _val >= 59 && _val <= 76
+            },
+            _ => false
+        };
+
+        let _has_valid_hcl: bool = match &_hcl_value[..1] {
+            "#" => {
+                let _length_matches = &_hcl_value[1..].len() == &(6 as usize);
+                if !_length_matches {
+                    return false
+                }
+
+                VALID_HEX_REG.captures(&_hcl_value[1..]).is_none()
+            },
+            _ => false
+        };
+
+        let _has_valid_ecl = vec!["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&_ecl_value);
+
+        let _has_valid_pid = _pid_value.len() == 9 as usize && VALID_PID_REG.captures(&_pid_value).is_none();
+
+        _has_valid_byr && _has_valid_ecl && _has_valid_eyr && _has_valid_hcl
+            && _has_valid_hcl && _has_valid_hgt && _has_valid_iyr && _has_valid_pid
     }
 }
 
@@ -99,21 +146,23 @@ impl Solution for Puzzle {
     }    
 
     fn solve_part_one(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartOne {
-        let mut _result: Self::OutputPartOne = 0;
-        
         _input
             .iter()
             .map(|_passport| PassValidator::new(_passport))
-            .filter(|_v| _v. is_valid_part_one())
+            .filter(|_v| _v. contains_mandatory_fields())
             .collect::<Vec<PassValidator>>()
             .len()
 
     }
 
     fn solve_part_two(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartTwo {
-        let mut _result: Self::OutputPartTwo = 0;
-
-        _result
+        _input
+            .iter()
+            .map(|_passport| PassValidator::new(_passport))
+            .filter(|_v| _v. contains_mandatory_fields())
+            .filter(|_v| _v. contains_valid_values())
+            .collect::<Vec<PassValidator>>()
+            .len()
     }
 }
 
@@ -140,5 +189,24 @@ mod tests {
 
     #[test]
     fn test_part_two() {
+        // given
+        let _input = vec![
+            // invalid
+            "eyr:1972 cid:100 hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926",
+            "iyr:2019 hcl:#602927 eyr:1967 hgt:170cm ecl:grn pid:012533040 byr:1946",
+            "hcl:dab227 iyr:2012 ecl:brn hgt:182cm pid:021572410 eyr:2020 byr:1992 cid:277",
+            "hgt:59cm ecl:zzz eyr:2038 hcl:74454a iyr:2023 pid:3556412378 byr:2007",
+            //valid
+            "pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980 hcl:#623a2f",
+            "eyr:2029 ecl:blu cid:129 byr:1989 iyr:2014 pid:896056539 hcl:#a97842 hgt:165cm",
+            "hcl:#888785 hgt:164cm byr:2001 iyr:2015 cid:88 pid:545766238 ecl:hzl eyr:2022",
+            "iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719"
+        ].into_iter().map(|_i| String::from(_i)).collect();
+
+        // when
+        let _res: usize = Puzzle::solve_part_two(&_input);
+
+        // then
+        assert_eq!(_res, 4);
     }
 }
