@@ -39,8 +39,6 @@ pub trait Solution {
         where 
             <Self::PuzzleInput as std::str::FromStr>::Err: std::fmt::Debug 
     {
-        println!("\nSolving puzzle for {}", _day_name);
-
         let _input: Vec<Self::PuzzleInput> = Self::read_input(
             &std::env::current_dir().unwrap().join("src/puzzles").join(_day_name).join("input.txt")
         );
