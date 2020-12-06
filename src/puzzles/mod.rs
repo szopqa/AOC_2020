@@ -6,6 +6,7 @@ pub mod day_2;
 pub mod day_3;
 pub mod day_4;
 pub mod day_5;
+pub mod day_6;
 
 pub fn solve_all() {
     day_1::Puzzle::solve("day_1");
@@ -13,4 +14,5 @@ pub fn solve_all() {
     day_3::Puzzle::solve("day_3");
     day_4::Puzzle::solve("day_4");
     day_5::Puzzle::solve("day_5");
+    day_6::Puzzle::solve("day_6");
 }
