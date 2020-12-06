@@ -13,11 +13,15 @@ impl Default for Seat {
 }
 
 impl Seat {
-    pub fn new(_pos_in_row: u8, _id: u64) -> Self {
+    pub fn new(_pos_in_row: u8) -> Self {
         Self {
             _pos_in_row,
-            _id
+            _id: 0 // seat with id 0 is not occupied
         }
+    }
+
+    pub fn set_id(&mut self, _row_pos: u8, _col_pos: u8) {
+        self._id = _row_pos as u64 * 8 + _col_pos as u64;
     }
 }
 
@@ -37,12 +41,16 @@ impl Row {
     pub fn new(_num: u8) -> Self {
         let mut _seats: [Seat; 8] = [Seat::default(); 8];
         for _i in 0..8 {
-            _seats[_i] = Seat {_pos_in_row: _i as u8, _id: 0}
+            _seats[_i] = Seat::new(_i as u8);
         }
         Self {
             _num,
             _seats
         }
+    }
+
+    pub fn add_occupied_seat(&mut self, _seat: &Seat) {
+        self._seats[_seat._pos_in_row as usize] = *_seat;
     }
 }
 
@@ -87,10 +95,31 @@ impl Plane {
         _ans as u8
     }
 
-    pub fn add_passenger(&self, _boarding_pass: &str) -> Seat {
+    pub fn find_free_seat(&mut self) -> Option<&Seat> {
+        let mut _last_empty_row_num: u8 = 0;
+        for _each_row in self._seats_rows[1..128].iter_mut() {
+            if let Some(_empty_seat) = _each_row._seats.iter_mut().find(|_s| _s._id == 0) {
+
+                if _each_row._num - _last_empty_row_num == 1 { // greedy, ignoring seats from plane's end
+                    _last_empty_row_num = _each_row._num;
+                    continue;
+                }
+
+                _empty_seat.set_id(_each_row._num, _empty_seat._pos_in_row);
+                return Some(_empty_seat)
+            }
+        }
+        None
+    }
+
+    pub fn add_passenger(&mut self, _boarding_pass: &str) -> Seat {
         let _row_pos = Self::evaluate_pos_binary(&_boarding_pass[..7]);
         let _col_pos = Self::evaluate_pos_binary(&_boarding_pass[_boarding_pass.len() - 3..]);
-        let _passenger_seat = Seat::new(_col_pos, _row_pos as u64 * 8 + _col_pos as u64);
+
+        let mut _passenger_seat = Seat::new(_col_pos);
+        _passenger_seat.set_id(_row_pos, _col_pos);
+
+        self._seats_rows[_row_pos as usize].add_occupied_seat(&_passenger_seat);
 
         _passenger_seat
     }
@@ -113,7 +142,13 @@ impl Solution for Puzzle {
     }
 
     fn solve_part_two(_input: &Vec<Self::PuzzleInput>) -> Self::OutputPartTwo {
-        0
+        let mut _plane = Plane::new();
+
+        for _each_i in _input {
+            _plane.add_passenger(_each_i);
+        }
+
+       _plane.find_free_seat().unwrap()._id
     }
 }
 
@@ -135,9 +170,5 @@ mod tests {
 
         // then
         assert_eq!(_res, 820);
-    }
-
-    #[test]
-    fn test_part_two() {
     }
 }
