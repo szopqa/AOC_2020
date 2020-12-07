@@ -9,6 +9,7 @@ pub mod day_3;
 pub mod day_4;
 pub mod day_5;
 pub mod day_6;
+pub mod day_7;
 
 fn solve_puzzle<F>(_puzzle_name: &str, _run_solution: F) -> ()
 where
@@ -27,4 +28,5 @@ pub fn solve_all() {
     solve_puzzle("day_4", day_4::Puzzle::solve);
     solve_puzzle("day_5", day_5::Puzzle::solve);
     solve_puzzle("day_6", day_6::Puzzle::solve);
+    solve_puzzle("day_7", day_7::Puzzle::solve);
 }
