@@ -18,20 +18,16 @@ impl Instruction {
 
 struct Console {
     instructions: Vec<Instruction>,
-    position: usize,
-    last_operations_swapped_position: usize,
     pub acc: i32,
-    visited_positions: Vec<usize>
+    last_operations_swapped_position: usize,
 }
 
 impl Console {
     pub fn new(instructions: &Vec<String>) -> Self {
         Self {
             instructions: instructions.iter().map(|i| Self::parse_instruction(i)).collect(),
-            position: 0,
-            last_operations_swapped_position: 0,
             acc: 0,
-            visited_positions: vec![]
+            last_operations_swapped_position: 0,
         }
     }
 
@@ -68,7 +64,7 @@ impl Console {
     
     pub fn swap_next(&mut self) {
         if self.last_operations_swapped_position != 0 {
-            self.swap_nop_jmp(self.last_operations_swapped_position);
+            self.swap_nop_jmp(self.last_operations_swapped_position); // swapping back previous instruction
         }
 
         let next_pos_to_swap = self.instructions
@@ -83,34 +79,34 @@ impl Console {
     }
 
     pub fn detect_infinite_cycle(&mut self) -> bool {
-        self.position = 0;
-        self.visited_positions = vec![];
+        let mut visited_positions: Vec<usize> = vec![];
+        let mut position: usize = 0;
         self.acc = 0;
 
         let mut contains_infinite_cycle = false;
         loop {
-            let instruction = match self.instructions.get(self.position as usize) {
+            let instruction = match self.instructions.get(position) {
                 Some(instruction) => instruction, 
                 None => { break; }
             };
 
-            if self.visited_positions.contains(&self.position) {
+            if visited_positions.contains(&position) {
                 contains_infinite_cycle = true;
                 break;
             }
 
-            self.visited_positions.push(self.position);
+            visited_positions.push(position);
 
             match instruction {
                 Instruction::NOP(_) => {
-                    self.position += 1;
+                    position += 1;
                 },
                 Instruction::ACC(val) => {
                     self.acc += val;
-                    self.position += 1;
+                    position += 1;
                 },
                 Instruction::JMP(val) => {
-                    self.position = (self.position as i32 + val) as usize;
+                    position = (position as i32 + val) as usize;
                 }
             }
         }
