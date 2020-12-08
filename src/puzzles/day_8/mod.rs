@@ -18,10 +18,10 @@ impl Instruction {
 
 struct Console {
     instructions: Vec<Instruction>,
-    position: u32,
+    position: usize,
     last_operations_swapped_position: usize,
     pub acc: i32,
-    visited_positions: Vec<u32>
+    visited_positions: Vec<usize>
 }
 
 impl Console {
@@ -110,7 +110,7 @@ impl Console {
                     self.position += 1;
                 },
                 Instruction::JMP(val) => {
-                    self.position = (self.position as i32 + val) as u32;
+                    self.position = (self.position as i32 + val) as usize;
                 }
             }
         }
