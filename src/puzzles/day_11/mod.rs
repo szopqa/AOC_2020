@@ -64,7 +64,6 @@ impl Ferry {
         for (row_pos, each_row) in self.seats.iter().enumerate() {
             for (pos_in_row, each_seat) in each_row.iter().enumerate() {
                 if *each_seat != '.' {
-                    println!("X: {}, Y: {}, VAL: {}", &row_pos, &pos_in_row, each_seat);
                     let neighbours = self.get_neighbours(&row_pos, &pos_in_row);
                     if *each_seat != '#' && Self::can_be_occupied(&neighbours) {
                         seats[row_pos][pos_in_row] = '#';
