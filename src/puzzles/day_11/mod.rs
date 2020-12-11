@@ -131,5 +131,24 @@ mod tests {
 
     #[test]
     fn test_part_one() {
+        // given
+        let _input = vec![
+            "L.LL.LL.LL",
+            "LLLLLLL.LL",
+            "L.L.L..L..",
+            "LLLL.LL.LL",
+            "L.LL.LL.LL",
+            "L.LLLLL.LL",
+            "..L.L.....",
+            "LLLLLLLLLL",
+            "L.LLLLLL.L",
+            "L.LLLLL.LL",
+        ].into_iter().map(|_i| String::from(_i)).collect();
+
+        // when
+        let _res: u64 = Puzzle::solve_part_one(&_input);
+
+        // then
+        assert_eq!(_res, 37);
     }
 }
