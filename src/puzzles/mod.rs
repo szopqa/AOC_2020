@@ -3,15 +3,15 @@ use std::time::{Instant};
 pub mod solution;
 use super::puzzles::solution::Solution;
 
-pub mod day_1;
-pub mod day_2;
-pub mod day_3;
-pub mod day_4;
-pub mod day_5;
-pub mod day_6;
-pub mod day_7;
-pub mod day_8;
-pub mod day_9;
+pub mod day_01;
+pub mod day_02;
+pub mod day_03;
+pub mod day_04;
+pub mod day_05;
+pub mod day_06;
+pub mod day_07;
+pub mod day_08;
+pub mod day_09;
 pub mod day_10;
 pub mod day_11;
 
@@ -26,15 +26,15 @@ where
 }
 
 pub fn solve_all() {
-    solve_puzzle("day_1", day_1::Puzzle::solve);
-    solve_puzzle("day_2", day_2::Puzzle::solve);
-    solve_puzzle("day_3", day_3::Puzzle::solve);
-    solve_puzzle("day_4", day_4::Puzzle::solve);
-    solve_puzzle("day_5", day_5::Puzzle::solve);
-    solve_puzzle("day_6", day_6::Puzzle::solve);
-    solve_puzzle("day_7", day_7::Puzzle::solve);
-    solve_puzzle("day_8", day_8::Puzzle::solve);
-    solve_puzzle("day_9", day_9::Puzzle::solve);
+    solve_puzzle("day_01", day_01::Puzzle::solve);
+    solve_puzzle("day_02", day_02::Puzzle::solve);
+    solve_puzzle("day_03", day_03::Puzzle::solve);
+    solve_puzzle("day_04", day_04::Puzzle::solve);
+    solve_puzzle("day_05", day_05::Puzzle::solve);
+    solve_puzzle("day_06", day_06::Puzzle::solve);
+    solve_puzzle("day_07", day_07::Puzzle::solve);
+    solve_puzzle("day_08", day_08::Puzzle::solve);
+    solve_puzzle("day_09", day_09::Puzzle::solve);
     solve_puzzle("day_10", day_10::Puzzle::solve);
     solve_puzzle("day_11", day_11::Puzzle::solve);
 }
