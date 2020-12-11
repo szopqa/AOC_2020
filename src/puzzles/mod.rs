@@ -13,6 +13,7 @@ pub mod day_7;
 pub mod day_8;
 pub mod day_9;
 pub mod day_10;
+pub mod day_11;
 
 fn solve_puzzle<F>(_puzzle_name: &str, _run_solution: F) -> ()
 where
@@ -25,14 +26,15 @@ where
 }
 
 pub fn solve_all() {
-    solve_puzzle("day_1", day_1::Puzzle::solve);
-    solve_puzzle("day_2", day_2::Puzzle::solve);
-    solve_puzzle("day_3", day_3::Puzzle::solve);
-    solve_puzzle("day_4", day_4::Puzzle::solve);
-    solve_puzzle("day_5", day_5::Puzzle::solve);
-    solve_puzzle("day_6", day_6::Puzzle::solve);
-    solve_puzzle("day_7", day_7::Puzzle::solve);
-    solve_puzzle("day_8", day_8::Puzzle::solve);
-    solve_puzzle("day_9", day_9::Puzzle::solve);
-    solve_puzzle("day_10", day_10::Puzzle::solve);
+    // solve_puzzle("day_1", day_1::Puzzle::solve);
+    // solve_puzzle("day_2", day_2::Puzzle::solve);
+    // solve_puzzle("day_3", day_3::Puzzle::solve);
+    // solve_puzzle("day_4", day_4::Puzzle::solve);
+    // solve_puzzle("day_5", day_5::Puzzle::solve);
+    // solve_puzzle("day_6", day_6::Puzzle::solve);
+    // solve_puzzle("day_7", day_7::Puzzle::solve);
+    // solve_puzzle("day_8", day_8::Puzzle::solve);
+    // solve_puzzle("day_9", day_9::Puzzle::solve);
+    // solve_puzzle("day_10", day_10::Puzzle::solve);
+    solve_puzzle("day_11", day_11::Puzzle::solve);
 }

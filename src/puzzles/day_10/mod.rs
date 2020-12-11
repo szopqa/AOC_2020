@@ -12,9 +12,11 @@ fn count_distinct(inp: &Vec<u32>, memory: &mut HashMap<usize, u64>, index:usize)
     }
 
     let mut ans = 0;
-    for i in index+1..inp.len() {
-        if inp.get(i).unwrap() - inp.get(index).unwrap() <= 3 {
-            ans += count_distinct(inp, memory, i);
+    for next_index in index+1..inp.len() {
+        if inp.get(next_index).unwrap() - inp.get(index).unwrap() <= 3 {
+            ans += count_distinct(inp, memory, next_index);
+        } else {
+            break; // ignoring rest as list is sorted
         }
     }
 
