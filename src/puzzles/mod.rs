@@ -15,17 +15,17 @@ pub mod day_09;
 pub mod day_10;
 pub mod day_11;
 
-fn solve_puzzle<F>(_puzzle_name: &'static str, _run_solution: F) -> JoinHandle<PuzzleResult>
+fn solve_puzzle<F>(_puzzle_name: &'static str, _run_solution: F) -> JoinHandle<()>
 where
     F: Fn(&str) -> PuzzleResult + std::marker::Sync + Send + 'static
 {
     spawn(move || {
-        _run_solution(_puzzle_name)
+        _run_solution(_puzzle_name).show_results();
     })
 }
 
 pub fn solve_all() {
-    let handles : Vec<JoinHandle<PuzzleResult>> = vec![
+    let handles : Vec<JoinHandle<()>> = vec![
         solve_puzzle("day_01", day_01::Puzzle::solve),
         solve_puzzle("day_02", day_02::Puzzle::solve),
         solve_puzzle("day_03", day_03::Puzzle::solve),
@@ -40,6 +40,6 @@ pub fn solve_all() {
     ];
 
     for handle in handles {
-        handle.join().unwrap().show_results();
+        handle.join().unwrap();
     }
 }

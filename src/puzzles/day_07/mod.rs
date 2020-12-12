@@ -102,7 +102,7 @@ impl Solution for Puzzle {
 
 #[cfg(test)]
 mod tests {
-    use crate::puzzles::day_7::*;
+    use crate::puzzles::day_07::*;
 
     #[test]
     fn test_part_one() {

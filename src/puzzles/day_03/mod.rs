@@ -77,7 +77,7 @@ impl Solution for Puzzle {
 
 #[cfg(test)]
 mod tests {
-    use crate::puzzles::day_3::*;
+    use crate::puzzles::day_03::*;
 
     #[test]
     fn test_part_one() {
