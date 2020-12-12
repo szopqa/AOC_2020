@@ -1,7 +1,7 @@
-use std::time::{Instant};
+use std::thread::{spawn, JoinHandle};
 
 pub mod solution;
-use super::puzzles::solution::Solution;
+use super::puzzles::solution::{Solution, PuzzleResult};
 
 pub mod day_01;
 pub mod day_02;
@@ -15,26 +15,31 @@ pub mod day_09;
 pub mod day_10;
 pub mod day_11;
 
-fn solve_puzzle<F>(_puzzle_name: &str, _run_solution: F) -> ()
+fn solve_puzzle<F>(_puzzle_name: &'static str, _run_solution: F) -> JoinHandle<PuzzleResult>
 where
-    F: Fn(&str) -> ()
+    F: Fn(&str) -> PuzzleResult + std::marker::Sync + Send + 'static
 {
-    println!("\nSolving puzzle: {}", _puzzle_name);
-    let now = Instant::now();
-    _run_solution(_puzzle_name);
-    println!("Solved in {}ms", now.elapsed().as_millis());
+    spawn(move || {
+        _run_solution(_puzzle_name)
+    })
 }
 
 pub fn solve_all() {
-    solve_puzzle("day_01", day_01::Puzzle::solve);
-    solve_puzzle("day_02", day_02::Puzzle::solve);
-    solve_puzzle("day_03", day_03::Puzzle::solve);
-    solve_puzzle("day_04", day_04::Puzzle::solve);
-    solve_puzzle("day_05", day_05::Puzzle::solve);
-    solve_puzzle("day_06", day_06::Puzzle::solve);
-    solve_puzzle("day_07", day_07::Puzzle::solve);
-    solve_puzzle("day_08", day_08::Puzzle::solve);
-    solve_puzzle("day_09", day_09::Puzzle::solve);
-    solve_puzzle("day_10", day_10::Puzzle::solve);
-    solve_puzzle("day_11", day_11::Puzzle::solve);
+    let handles : Vec<JoinHandle<PuzzleResult>> = vec![
+        solve_puzzle("day_01", day_01::Puzzle::solve),
+        solve_puzzle("day_02", day_02::Puzzle::solve),
+        solve_puzzle("day_03", day_03::Puzzle::solve),
+        solve_puzzle("day_04", day_04::Puzzle::solve),
+        solve_puzzle("day_05", day_05::Puzzle::solve),
+        solve_puzzle("day_06", day_06::Puzzle::solve),
+        solve_puzzle("day_07", day_07::Puzzle::solve),
+        solve_puzzle("day_08", day_08::Puzzle::solve),
+        solve_puzzle("day_09", day_09::Puzzle::solve),
+        solve_puzzle("day_10", day_10::Puzzle::solve),
+        solve_puzzle("day_11", day_11::Puzzle::solve),
+    ];
+
+    for handle in handles {
+        handle.join().unwrap().show_results();
+    }
 }
