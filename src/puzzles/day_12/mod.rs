@@ -47,10 +47,16 @@ impl FromStr for Action {
     }
 }
 
+struct Waypoint {
+    y_pos: i32,
+    x_pos: i32,
+}
+
 pub struct Ferry {
     y_pos: i32,
     x_pos: i32,
-    last_dir: Dir
+    last_dir: Dir,
+    waypoint: Waypoint
 }
 
 impl Ferry {
@@ -58,14 +64,27 @@ impl Ferry {
         Self {
             y_pos: 0,
             x_pos: 0,
-            last_dir: Dir::E
+            last_dir: Dir::E,
+            waypoint: Waypoint {
+                x_pos: 10,
+                y_pos: 1
+            }
         }
     }
 
-    fn change_pos(&mut self, dir: Dir, change_val: i32) {
+    fn change_ferry_pos(&mut self, dir: Dir, change_val: i32) {
         let pos = match dir {
             Dir::N | Dir::S => &mut self.y_pos,
             Dir::W | Dir::E => &mut self.x_pos
+        };
+        let change_val = if dir == Dir::S || dir == Dir::W {-1 * change_val} else {change_val};
+        *pos += change_val;
+    }
+
+    fn change_waypoint_pos(&mut self, dir: Dir, change_val: i32) {
+        let pos = match dir {
+            Dir::N | Dir::S => &mut self.waypoint.y_pos,
+            Dir::W | Dir::E => &mut self.waypoint.x_pos
         };
         let change_val = if dir == Dir::S || dir == Dir::W {-1 * change_val} else {change_val};
         *pos += change_val;
@@ -88,19 +107,42 @@ impl Ferry {
         self.last_dir = *directions.get(new_pos as usize).unwrap();
     }
 
+    fn rotate_by_90(&mut self, turn: &Turn) {
+        match *turn {
+            Turn::R => {
+                let x = self.waypoint.x_pos;
+                self.waypoint.x_pos = self.waypoint.y_pos;
+                self.waypoint.y_pos = -x;
+            }
+            Turn::L => {
+                let y = self.waypoint.y_pos;
+                self.waypoint.y_pos = self.waypoint.x_pos;
+                self.waypoint.x_pos = -y;
+            }
+        }
+    }
+
+    fn rotate_waypoint(&mut self, turn: Turn, angle: i32) {
+        let shift = (angle / 90) % 4;
+
+        for _ in 0..shift {
+            self.rotate_by_90(&turn)
+        }        
+    }
+
     fn move_next(&mut self, action: Action) {
         match action {
             Action::N(val) => {
-                self.change_pos(Dir::N, val);
+                self.change_ferry_pos(Dir::N, val);
             }
             Action::S(val) => {
-                self.change_pos(Dir::S, val);
+                self.change_ferry_pos(Dir::S, val);
             }
             Action::E(val) => {
-                self.change_pos(Dir::E, val);
+                self.change_ferry_pos(Dir::E, val);
             }
             Action::W(val) => {
-                self.change_pos(Dir::W, val);
+                self.change_ferry_pos(Dir::W, val);
             }
             Action::L(val) => {
                 self.change_angle(Turn::L, val);
@@ -110,18 +152,39 @@ impl Ferry {
             }
             Action::F(val) => {
                 let current = self.last_dir;
-                self.change_pos(current, val);
+                self.change_ferry_pos(current, val);
             }
         }
     }
 
-    fn get_pos(&self) {
-        println!("N: {}, E: {}, S: {}, W: {}", 
-            if self.y_pos > 0 {self.y_pos} else {0}, 
-            if self.x_pos > 0 {self.x_pos} else {0}, 
-            if self.y_pos < 0 {self.y_pos * -1} else {0}, 
-            if self.x_pos < 0 {self.x_pos * -1} else {0}, 
-        );
+    fn move_next_with_waypoint(&mut self, action: Action) {
+        match action {
+            Action::N(val) => {
+                self.change_waypoint_pos(Dir::N, val);
+            }
+            Action::S(val) => {
+                self.change_waypoint_pos(Dir::S, val);
+            }
+            Action::E(val) => {
+                self.change_waypoint_pos(Dir::E, val);
+            }
+            Action::W(val) => {
+                self.change_waypoint_pos(Dir::W, val);
+            }
+            Action::L(val) => {
+                self.rotate_waypoint(Turn::L, val);
+            }
+            Action::R(val) => {
+                self.rotate_waypoint(Turn::R, val);
+            }
+            Action::F(val) => {
+                let x = self.waypoint.x_pos * val;
+                let y = self.waypoint.y_pos * val;
+
+                self.x_pos += x;
+                self.y_pos += y;
+            }
+        }
     }
 
     fn get_distance(&self) -> i32 {
@@ -134,19 +197,23 @@ pub struct Puzzle {}
 impl Solution for Puzzle {
     type PuzzleInput = String;
     type OutputPartOne = i32;
-    type OutputPartTwo = u64;
+    type OutputPartTwo = i32;
 
     fn solve_part_one(input: &Vec<Self::PuzzleInput>) -> Self::OutputPartOne {
         let mut ferry = Ferry::new();
         for c in input {
             ferry.move_next(Action::from_str(c).unwrap());
-            // ferry.get_pos();
         }
         ferry.get_distance()
     }
 
     fn solve_part_two(input: &Vec<Self::PuzzleInput>) -> Self::OutputPartTwo {
-        0
+        let mut ferry = Ferry::new();
+        for c in input {
+            ferry.move_next_with_waypoint(Action::from_str(c).unwrap());
+            // ferry.get_pos();
+        }
+        ferry.get_distance()
     }
 }
 
@@ -170,5 +237,23 @@ mod tests {
 
         // then
         assert_eq!(_res, 25);
+    }
+
+    #[test]
+    fn test_part_two() {
+        // given
+        let _input = vec![
+            "F10",
+            "N3",
+            "F7",
+            "R90",
+            "F11"
+        ].into_iter().map(|_i| String::from(_i)).collect();
+
+        // when
+        let _res: i32 = Puzzle::solve_part_two(&_input);
+
+        // then
+        assert_eq!(_res, 286);
     }
 }
