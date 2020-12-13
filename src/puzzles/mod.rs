@@ -15,6 +15,7 @@ pub mod day_09;
 pub mod day_10;
 pub mod day_11;
 pub mod day_12;
+pub mod day_13;
 
 fn solve_puzzle<F>(_puzzle_name: &'static str, _run_solution: F) -> JoinHandle<()>
 where
@@ -40,6 +41,7 @@ pub fn solve_all() {
         solve_puzzle("day_10", day_10::Puzzle::solve),
         solve_puzzle("day_11", day_11::Puzzle::solve),
         solve_puzzle("day_12", day_12::Puzzle::solve),
+        solve_puzzle("day_13", day_13::Puzzle::solve),
     ];
 
     for handle in handles {
