@@ -29,10 +29,10 @@ impl PuzzleResult {
     pub fn show_results(&self) {
         println!("\nResults for {}", self.puzzle_name);
         println!("  * Part one:");
-        println!("       Result: {}:", self.solution_part_one);
+        println!("       Result: {}", self.solution_part_one);
         println!("       Execution time: {}ms", self.part_one_time_ms);
         println!("  * Part two:");
-        println!("       Result: {}:", self.solution_part_two);
+        println!("       Result: {}", self.solution_part_two);
         println!("       Execution time: {}ms", self.part_two_time_ms);
     }
 }

@@ -14,12 +14,14 @@ pub mod day_08;
 pub mod day_09;
 pub mod day_10;
 pub mod day_11;
+pub mod day_12;
 
 fn solve_puzzle<F>(_puzzle_name: &'static str, _run_solution: F) -> JoinHandle<()>
 where
     F: Fn(&str) -> PuzzleResult + std::marker::Sync + Send + 'static
 {
     spawn(move || {
+        println!("Starting solution for {}", _puzzle_name);
         _run_solution(_puzzle_name).show_results();
     })
 }
@@ -37,6 +39,7 @@ pub fn solve_all() {
         solve_puzzle("day_09", day_09::Puzzle::solve),
         solve_puzzle("day_10", day_10::Puzzle::solve),
         solve_puzzle("day_11", day_11::Puzzle::solve),
+        solve_puzzle("day_12", day_12::Puzzle::solve),
     ];
 
     for handle in handles {
